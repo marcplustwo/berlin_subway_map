@@ -1,9 +1,9 @@
 import React from "react";
-// import { Map } from "./Map/Map";
+import { SubwayMap } from "./SubwayMap/SubwayMap";
 
 const MapPage: React.FC = () => (
   <>
-    <p>MapPage</p>
+    <SubwayMap />
   </>
 );
 
