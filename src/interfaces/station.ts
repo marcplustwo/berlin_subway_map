@@ -1,5 +1,4 @@
 interface Station {
-  stop_id_generic: string;
   stop_id: string;
   stop_name: string;
   stop_lat: number;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -10,7 +10,8 @@ import "leaflet/dist/leaflet.css";
 
 // weird hack incoming: https://github.com/PaulLeCam/react-leaflet/issues/453#issuecomment-410450387
 import L from "leaflet";
-import { useRouteCoordinates, useRoutesData } from "./data/get_routes_data";
+import { useRouteCoordinates, useStationsData } from "./data/getRoutesData";
+import { PictureOverlay } from "./PictureOverlay/PictureOverlay";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -33,37 +34,50 @@ const colorOptions: Record<string, L.PathOptions> = {
 };
 
 const SubwayMap: React.FC = () => {
-  const route_coords = useRouteCoordinates();
-  const routes = useRoutesData();
+  const routeCoords = useRouteCoordinates();
+  const stations = useStationsData();
+
+  const [currentStationId, setCurrentStationId] = useState<string | undefined>(
+    undefined
+  );
 
   return (
-    <MapContainer
-      style={{ height: "800px", width: "100vw" }}
-      center={[52.5262526, 13.3461733]}
-      zoom={12}
-    >
-      <TileLayer
-        // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <>
+      <PictureOverlay
+        setCurrentStationId={setCurrentStationId}
+        currentStationId={currentStationId}
       />
-      {routes.map((station) => (
-        <Marker
-          key={station.stop_id}
-          position={[station.stop_lat, station.stop_lon]}
-        >
-          <Popup>
-            {station.stop_name} ({station.route_short_name})
-          </Popup>
-        </Marker>
-      ))}
-      {Object.entries(route_coords).map(([route_name, coords], idx) => (
-        <Polyline
-          key={`${route_name}-${idx}`}
-          positions={coords}
-          pathOptions={colorOptions[route_name]}
+      <MapContainer
+        style={{ height: "60vh", width: "100vw" }}
+        center={[52.5262526, 13.3461733]}
+        zoom={12}
+      >
+        <TileLayer
+          // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      ))}
-    </MapContainer>
+        {stations.map((station) => (
+          <Marker
+            key={`${station.stop_id}-${station.route_id}`}
+            position={[station.stop_lat, station.stop_lon]}
+            eventHandlers={{
+              click: () => setCurrentStationId(station.stop_id),
+            }}
+          >
+            <Popup>
+              {station.stop_name} ({station.route_short_name})
+            </Popup>
+          </Marker>
+        ))}
+        {Object.entries(routeCoords).map(([route_name, coords], idx) => (
+          <Polyline
+            key={`${route_name}-${idx}`}
+            positions={coords}
+            pathOptions={colorOptions[route_name]}
+          />
+        ))}
+      </MapContainer>
+    </>
   );
 };
 
