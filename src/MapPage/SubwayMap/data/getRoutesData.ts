@@ -44,8 +44,8 @@ const getAdjacentStations = (stopId: string) => {
   const current = stations[index];
 
   return [
-    prev.route_id === current.route_id ? prev : undefined,
-    next.route_id === current.route_id ? next : undefined,
+    prev?.route_id === current.route_id ? prev : undefined,
+    next?.route_id === current.route_id ? next : undefined,
   ];
 };
 
@@ -54,4 +54,5 @@ export {
   useRouteCoordinates,
   getStationById,
   getAdjacentStations,
+  getRouteForStation,
 };

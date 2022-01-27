@@ -5,11 +5,13 @@ import { css } from "@emotion/react";
 import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import { Box } from "@mui/system";
-import { getAdjacentStations, getStationById } from "../data/getRoutesData";
-import { StationCard } from "./StationCard";
+import { getAdjacentStations } from "../data/getRoutesData";
+import { StationCard } from "./StationCard/StationCard";
+import { EmptyStationCard } from "./StationCard/EmptyStationCard";
+import { Station } from "../../../interfaces/station";
 
 interface PictureOverlayProps {
-  currentStationId: string | undefined;
+  station: Station | undefined;
   setCurrentStationId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
@@ -20,14 +22,13 @@ const paperStyle = css({
   left: "0.5rem",
   right: "0.5rem",
   padding: "0.5rem",
-  opacity: "1",
+  // opacity: "1",
   // "&:hover": {
-  //   opacity: "1",
   // },
 });
 
 const PictureOverlay: React.FC<PictureOverlayProps> = (props) => {
-  if (!props.currentStationId) {
+  if (!props.station) {
     return (
       <Paper css={paperStyle} elevation={3}>
         <Box
@@ -46,13 +47,9 @@ const PictureOverlay: React.FC<PictureOverlayProps> = (props) => {
     );
   }
 
-  const station = getStationById(props.currentStationId);
+  const [prevStation, nextStation] = getAdjacentStations(props.station.stop_id);
 
-  const [prevStation, nextStation] = getAdjacentStations(
-    props.currentStationId
-  );
-
-  console.log({ prevStation, station, nextStation });
+  // console.log({ prevStation, props.station, nextStation });
 
   return (
     <Paper css={paperStyle} elevation={3}>
@@ -71,9 +68,25 @@ const PictureOverlay: React.FC<PictureOverlayProps> = (props) => {
         >
           <ArrowBackIos />
         </Button>
-        {prevStation && <StationCard small station={prevStation} />}
-        <StationCard station={station} />
-        {nextStation && <StationCard small station={nextStation} />}
+        {prevStation ? (
+          <StationCard
+            onClick={() => props.setCurrentStationId(prevStation.stop_id)}
+            small
+            station={prevStation}
+          />
+        ) : (
+          <EmptyStationCard />
+        )}
+        <StationCard station={props.station} />
+        {nextStation ? (
+          <StationCard
+            onClick={() => props.setCurrentStationId(nextStation.stop_id)}
+            small
+            station={nextStation}
+          />
+        ) : (
+          <EmptyStationCard />
+        )}
         <Button
           variant="text"
           disabled={!nextStation}

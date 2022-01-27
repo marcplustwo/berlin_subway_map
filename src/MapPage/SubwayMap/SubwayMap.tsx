@@ -10,8 +10,14 @@ import "leaflet/dist/leaflet.css";
 
 // weird hack incoming: https://github.com/PaulLeCam/react-leaflet/issues/453#issuecomment-410450387
 import L from "leaflet";
-import { useRouteCoordinates, useStationsData } from "./data/getRoutesData";
+import {
+  getRouteForStation,
+  getStationById,
+  useRouteCoordinates,
+  useStationsData,
+} from "./data/getRoutesData";
 import { PictureOverlay } from "./PictureOverlay/PictureOverlay";
+import { routeColors } from "../../constants/routeColors";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -21,18 +27,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-const colorOptions: Record<string, L.PathOptions> = {
-  U1: { color: "#55af49", weight: 4 },
-  U2: { color: "#f25528", weight: 4 },
-  U3: { color: "#10ab99", weight: 4 },
-  U4: { color: "#ffd404", weight: 4 },
-  U5: { color: "#865942", weight: 4 },
-  U6: { color: "#8370ad", weight: 4 },
-  U7: { color: "#0798d9", weight: 4 },
-  U8: { color: "#085da1", weight: 4 },
-  U9: { color: "#eb861a", weight: 4 },
-};
-
 const SubwayMap: React.FC = () => {
   const routeCoords = useRouteCoordinates();
   const stations = useStationsData();
@@ -41,11 +35,15 @@ const SubwayMap: React.FC = () => {
     undefined
   );
 
+  const station = getStationById(currentStationId ?? "");
+
+  const currentRoute = getRouteForStation(currentStationId ?? "");
+
   return (
     <>
       <PictureOverlay
         setCurrentStationId={setCurrentStationId}
-        currentStationId={currentStationId}
+        station={station}
       />
       <MapContainer
         style={{ height: "60vh", width: "100vw" }}
@@ -53,13 +51,14 @@ const SubwayMap: React.FC = () => {
         zoom={12}
       >
         <TileLayer
-          // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {stations.map((station) => (
           <Marker
             key={`${station.stop_id}-${station.route_id}`}
             position={[station.stop_lat, station.stop_lon]}
+            opacity={station.stop_id === currentStationId ? 1 : 0.5}
             eventHandlers={{
               click: () => setCurrentStationId(station.stop_id),
             }}
@@ -69,11 +68,23 @@ const SubwayMap: React.FC = () => {
             </Popup>
           </Marker>
         ))}
-        {Object.entries(routeCoords).map(([route_name, coords], idx) => (
+        {station && (
+          <Popup
+            offset={[0, -20]}
+            position={[station.stop_lat, station.stop_lon]}
+          >
+            {station.stop_name} ({station.route_short_name})
+          </Popup>
+        )}
+        {Object.entries(routeCoords).map(([routeName, position], idx) => (
           <Polyline
-            key={`${route_name}-${idx}`}
-            positions={coords}
-            pathOptions={colorOptions[route_name]}
+            key={`${routeName}-${idx}`}
+            positions={position}
+            pathOptions={{
+              ...routeColors[routeName],
+              weight: station && routeName === currentRoute ? 8 : 4,
+              opacity: station && routeName === currentRoute ? 1 : 0.5,
+            }}
           />
         ))}
       </MapContainer>
