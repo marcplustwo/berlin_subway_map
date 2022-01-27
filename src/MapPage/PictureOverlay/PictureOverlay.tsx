@@ -5,10 +5,10 @@ import { css } from "@emotion/react";
 import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import { Box } from "@mui/system";
-import { getAdjacentStations } from "../data/getRoutesData";
+import { getAdjacentStations } from "../SubwayMap/data/getRoutesData";
 import { StationCard } from "./StationCard/StationCard";
 import { EmptyStationCard } from "./StationCard/EmptyStationCard";
-import { Station } from "../../../interfaces/station";
+import { Station } from "../../interfaces/station";
 
 interface PictureOverlayProps {
   station: Station | undefined;
@@ -22,9 +22,6 @@ const paperStyle = css({
   left: "0.5rem",
   right: "0.5rem",
   padding: "0.5rem",
-  // opacity: "1",
-  // "&:hover": {
-  // },
 });
 
 const PictureOverlay: React.FC<PictureOverlayProps> = (props) => {
@@ -48,8 +45,6 @@ const PictureOverlay: React.FC<PictureOverlayProps> = (props) => {
   }
 
   const [prevStation, nextStation] = getAdjacentStations(props.station.stop_id);
-
-  // console.log({ prevStation, props.station, nextStation });
 
   return (
     <Paper css={paperStyle} elevation={3}>

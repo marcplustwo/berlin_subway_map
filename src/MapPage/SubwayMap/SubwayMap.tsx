@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   MapContainer,
   Marker,
@@ -12,12 +12,11 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import {
   getRouteForStation,
-  getStationById,
   useRouteCoordinates,
   useStationsData,
 } from "./data/getRoutesData";
-import { PictureOverlay } from "./PictureOverlay/PictureOverlay";
 import { routeColors } from "../../constants/routeColors";
+import { Station } from "../../interfaces/station";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -27,24 +26,19 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-const SubwayMap: React.FC = () => {
+interface SubwayMapProps {
+  station: Station | undefined;
+  setCurrentStationId: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
+
+const SubwayMap: React.FC<SubwayMapProps> = (props) => {
   const routeCoords = useRouteCoordinates();
   const stations = useStationsData();
 
-  const [currentStationId, setCurrentStationId] = useState<string | undefined>(
-    undefined
-  );
-
-  const station = getStationById(currentStationId ?? "");
-
-  const currentRoute = getRouteForStation(currentStationId ?? "");
+  const currentRoute = getRouteForStation(props.station?.stop_id ?? "");
 
   return (
     <>
-      <PictureOverlay
-        setCurrentStationId={setCurrentStationId}
-        station={station}
-      />
       <MapContainer
         style={{ height: "60vh", width: "100vw" }}
         center={[52.5262526, 13.3461733]}
@@ -58,9 +52,9 @@ const SubwayMap: React.FC = () => {
           <Marker
             key={`${station.stop_id}-${station.route_id}`}
             position={[station.stop_lat, station.stop_lon]}
-            opacity={station.stop_id === currentStationId ? 1 : 0.5}
+            opacity={station.stop_id === props.station?.stop_id ? 1 : 0.5}
             eventHandlers={{
-              click: () => setCurrentStationId(station.stop_id),
+              click: () => props.setCurrentStationId(station.stop_id),
             }}
           >
             <Popup>
@@ -68,12 +62,12 @@ const SubwayMap: React.FC = () => {
             </Popup>
           </Marker>
         ))}
-        {station && (
+        {props.station && (
           <Popup
             offset={[0, -20]}
-            position={[station.stop_lat, station.stop_lon]}
+            position={[props.station.stop_lat, props.station.stop_lon]}
           >
-            {station.stop_name} ({station.route_short_name})
+            {props.station.stop_name} ({props.station.route_short_name})
           </Popup>
         )}
         {Object.entries(routeCoords).map(([routeName, position], idx) => (
@@ -82,8 +76,8 @@ const SubwayMap: React.FC = () => {
             positions={position}
             pathOptions={{
               ...routeColors[routeName],
-              weight: station && routeName === currentRoute ? 8 : 4,
-              opacity: station && routeName === currentRoute ? 1 : 0.5,
+              weight: props.station && routeName === currentRoute ? 8 : 4,
+              opacity: props.station && routeName === currentRoute ? 1 : 0.5,
             }}
           />
         ))}

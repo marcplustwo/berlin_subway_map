@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { css } from "@emotion/react";
 
-import { Station } from "../../../../interfaces/station";
-import { routeColors } from "../../../../constants/routeColors";
+import { Station } from "../../../interfaces/station";
+import { routeColors } from "../../../constants/routeColors";
 import { StationImg } from "./StationImg";
 
 const paperStyle = css({
