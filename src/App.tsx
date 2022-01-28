@@ -13,9 +13,6 @@ const App: React.FC = () => (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/map" element={<MapPage />} />
-      {/* <Route path="/votes">
-        <VotesPage />
-      </Route> */}
     </Routes>
   </Router>
 );

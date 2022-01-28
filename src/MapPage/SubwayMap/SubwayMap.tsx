@@ -55,12 +55,13 @@ const SubwayMap: React.FC<SubwayMapProps> = (props) => {
             opacity={station.stop_id === props.station?.stop_id ? 1 : 0.5}
             eventHandlers={{
               click: () => props.setCurrentStationId(station.stop_id),
+              // mouseover: () => {
+              //   console.log("here");
+              //   setShowPopup(true);
+              // },
+              // mouseout: () => setShowPopup(false),
             }}
-          >
-            <Popup>
-              {station.stop_name} ({station.route_short_name})
-            </Popup>
-          </Marker>
+          ></Marker>
         ))}
         {props.station && (
           <Popup

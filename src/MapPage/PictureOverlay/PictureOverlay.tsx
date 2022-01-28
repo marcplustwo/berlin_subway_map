@@ -13,6 +13,7 @@ import { Station } from "../../interfaces/station";
 interface PictureOverlayProps {
   station: Station | undefined;
   setCurrentStationId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  toggleGallery(): void;
 }
 
 const paperStyle = css({
@@ -72,7 +73,7 @@ const PictureOverlay: React.FC<PictureOverlayProps> = (props) => {
         ) : (
           <EmptyStationCard />
         )}
-        <StationCard station={props.station} />
+        <StationCard onClick={props.toggleGallery} station={props.station} />
         {nextStation ? (
           <StationCard
             onClick={() => props.setCurrentStationId(nextStation.stop_id)}

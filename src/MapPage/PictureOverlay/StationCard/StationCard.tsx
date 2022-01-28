@@ -3,12 +3,14 @@ import React from "react";
 import {
   Box,
   Chip,
+  Fab,
   ImageList,
   ImageListItem,
   Paper,
   Typography,
 } from "@mui/material";
 import { css } from "@emotion/react";
+import ZoomOutMap from "@mui/icons-material/ZoomOutMap";
 
 import { Station } from "../../../interfaces/station";
 import { routeColors } from "../../../constants/routeColors";
@@ -18,10 +20,16 @@ const paperStyle = css({
   padding: "0.2rem",
 });
 
+const fabStyle = css({
+  position: "relative",
+  bottom: "4rem",
+  left: "0.5rem",
+});
+
 interface StationCardProps {
   station: Station;
   small?: boolean;
-  onClick?(): void;
+  onClick(): void;
 }
 
 const StationCard: React.FC<StationCardProps> = (props) => {
@@ -56,6 +64,11 @@ const StationCard: React.FC<StationCardProps> = (props) => {
           <StationImg stopId={props.station.stop_id} id={1} />
         </ImageListItem>
       </ImageList>
+      {!props.small && (
+        <Fab size="small" css={fabStyle} aria-label="add">
+          <ZoomOutMap />
+        </Fab>
+      )}
     </Paper>
   );
 };
