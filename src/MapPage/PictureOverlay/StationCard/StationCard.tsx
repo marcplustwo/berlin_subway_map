@@ -61,7 +61,7 @@ const StationCard: React.FC<StationCardProps> = (props) => {
       </Box>
       <ImageList cols={1} rowHeight={props.small ? 0.7 * 240 : 240}>
         <ImageListItem>
-          <StationImg stopId={props.station.stop_id} id={1} />
+          <StationImg isPreview stopId={props.station.stop_id} id={1} />
         </ImageListItem>
       </ImageList>
       {!props.small && (

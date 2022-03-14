@@ -5,17 +5,18 @@ interface StationImgProps {
   id: number;
   onError?(): void;
   onLoad?(): void;
+  isPreview?: boolean;
 }
 const imgBasePath = "http://localhost:8001/";
 
 const getImgPath = (stopId: string, id: number): string => {
-  return `${imgBasePath}${stopId}-${id}.JPG`;
+  return `${imgBasePath}${stopId}-${id}.jpg`;
 };
 
 const StationImg: React.FC<StationImgProps> = (props) => {
   const [isError, setIsError] = useState(false);
 
-  return !isError ? (
+  return isError && !props.isPreview ? null : (
     <img
       style={{ height: "100%", width: "100%" }}
       src={getImgPath(props.stopId, props.id)}
@@ -23,7 +24,7 @@ const StationImg: React.FC<StationImgProps> = (props) => {
       onError={() => setIsError(true)}
       onLoad={props.onLoad}
     />
-  ) : null;
+  );
 };
 
 export { StationImg };
