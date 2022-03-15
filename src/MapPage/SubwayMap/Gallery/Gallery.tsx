@@ -58,7 +58,7 @@ const Gallery: React.FC<GalleryProps> = (props) => {
           {props.station.stop_name.replace("(Berlin)", "").trim()}
         </Typography>
       </Box>
-      <ImageList cols={1} gap={4} sx={{ width: "100%", height: "100%" }}>
+      <ImageList cols={2} gap={4} sx={{ width: "100%", height: "100%" }}>
         {Array.from(Array(6))
           .map((_, i) => i + 1)
           .map((nr) => (
