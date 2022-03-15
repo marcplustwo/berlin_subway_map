@@ -7,7 +7,10 @@ interface StationImgProps {
   onLoad?(): void;
   isPreview?: boolean;
 }
-const imgBasePath = "http://localhost:8001/";
+const imgBasePath =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8001/"
+    : "https://marcradau.de/";
 
 const getImgPath = (stopId: string, id: number): string => {
   return `${imgBasePath}${stopId}-${id}.jpg`;
