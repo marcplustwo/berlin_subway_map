@@ -19,6 +19,17 @@ const getImgPath = (stopId: string, id: number): string => {
 const StationImg: React.FC<StationImgProps> = (props) => {
   const [isError, setIsError] = useState(false);
 
+  if (isError && props.id === 1) {
+    return (
+      <img
+        style={{ height: "100%", width: "100%" }}
+        src={`${imgBasePath}placeholder.jpg`}
+        loading="lazy"
+        // onLoad={props.onLoad}
+      />
+    );
+  }
+
   return isError && !props.isPreview ? null : (
     <img
       style={{ height: "100%", width: "100%" }}
