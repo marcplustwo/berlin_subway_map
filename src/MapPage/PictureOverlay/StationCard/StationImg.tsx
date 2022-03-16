@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface StationImgProps {
   stopId: string;
   id: number;
   onError?(): void;
-  onLoad?(): void;
+  // onLoad?(): void;
   isPreview?: boolean;
 }
 const imgBasePath =
@@ -19,13 +19,14 @@ const getImgPath = (stopId: string, id: number): string => {
 const StationImg: React.FC<StationImgProps> = (props) => {
   const [isError, setIsError] = useState(false);
 
+  useEffect(() => setIsError(false), [props.stopId]);
+
   if (isError && props.id === 1) {
     return (
       <img
         style={{ height: "100%", width: "100%" }}
         src={`${imgBasePath}placeholder.jpg`}
         loading="lazy"
-        // onLoad={props.onLoad}
       />
     );
   }
@@ -36,7 +37,7 @@ const StationImg: React.FC<StationImgProps> = (props) => {
       src={getImgPath(props.stopId, props.id)}
       loading="lazy"
       onError={() => setIsError(true)}
-      onLoad={props.onLoad}
+      onLoad={() => setIsError(false)}
     />
   );
 };
